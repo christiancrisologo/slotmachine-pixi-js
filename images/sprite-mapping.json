@@ -1,0 +1,173 @@
+{"frames": {
+ 
+"snowflake":
+{
+	"id":"1",
+	"frame": {"x":0,"y":238,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"sandglass":
+{
+	"id":"2",
+	"frame": {"x":0,"y":0,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"victory":
+{
+	"id":"3",
+	"frame": {"x":0,"y":357,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"sun":
+{
+	"id":"4",
+	"frame": {"x":0,"y":119,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"ace":
+{
+	"id":"5",
+	"frame": {"x":0,"y":476,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"king":
+{
+	"id":"6",
+	"frame": {"x":0,"y":596,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"queen":
+{
+	"id":"7",
+	"frame": {"x":148,"y":0,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"jack":
+{
+	"id":"8",
+	"frame": {"x":148,"y":120,"w":149,"h":120},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"upbet-hover":
+{
+	"id":"9",
+	"frame": {"x":460,"y":610,"w":80,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"upbet":
+{
+	"id":"10",
+	"frame": {"x":460,"y":540,"w":80,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"downbet-hover":
+{
+	"id":"11",
+	"frame": {"x":555,"y":610,"w":80,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"downbet":
+{
+	"id":"12",
+	"frame": {"x":555,"y":540,"w":80,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"spinbutton-hover":
+{
+	"id":"13",
+	"frame": {"x":301,"y":605,"w":157,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"spinbutton":
+{
+	"id":"14",
+	"frame": {"x":301,"y":535,"w":157,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pattern1":
+{
+	"id":"15",
+	"frame": {"x":570,"y":540,"w":90,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pattern2":
+{
+	"id":"16",
+	"frame": {"x":650,"y":540,"w":90,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pattern3":
+{
+	"id":"17",
+	"frame": {"x":730,"y":540,"w":90,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pattern4":
+{
+	"id":"18",
+	"frame": {"x":570,"y":560,"w":90,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pattern5":
+{
+	"id":"19",
+	"frame": {"x":650,"y":560,"w":90,"h":70},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+},
+"gameboard":
+{
+	"id":"20",
+	"frame": {"x":301,"y":0,"w":792,"h":520},
+	"rotated": false,
+	"trimmed": false,
+	"pivot": {"x":0.5,"y":0.5}
+}
+},
+"meta": {
+	"app": "slotmachine",
+	"version": "1.0",
+	"image": "slot-machine-tiles.png",
+	"format": "RGBA8888",
+	"size": {"w":1099,"h":719},
+	"scale": "1"
+}
+}
