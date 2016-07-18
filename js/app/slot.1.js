@@ -40,7 +40,7 @@ var Player = (function () {
     }
 
     return Player;
-} (SlotMachine));
+} ());
 
 /**
  *  Config Class
@@ -77,7 +77,7 @@ var SlotConfig = (function () {
     }
     return SlotConfig;
 
-} (SlotMachine));
+} ());
 
 
 
@@ -178,7 +178,7 @@ var ReelDictionary = (function () {
         }
 
     }
-} (SlotMachine))
+} ())
 
 
 
@@ -455,7 +455,7 @@ var Constants = (function () {
         REEL_COMPLETING: 1,
         REEL_PLAY: 2
     }
-} (SlotMachine));
+} ());
 
 
 /**
@@ -523,7 +523,7 @@ var Utils = (function () {
         }
 
     }
-} (SlotMachine));
+} ());
 
 
 
@@ -543,7 +543,7 @@ var GameAudio = (function () {
     }
 
     return GameAudio;
-} (SlotMachine))
+} ())
 
 
 
