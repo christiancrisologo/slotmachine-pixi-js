@@ -469,13 +469,6 @@ var Utils = (function () {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
 
-        getRandomList: function (min = 0, max = 6, arrayLength = 5) {
-            var array = [];
-            for (var i = 0; i < arrayLength; i++) {
-                array.push(getRandomInt(min, max));
-            }
-            return array;
-        },
 
         copyArray: function (array) {
             var copy = [];
