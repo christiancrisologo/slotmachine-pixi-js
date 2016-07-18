@@ -275,18 +275,6 @@ var Reel = (function (_super) {
             this.speed = 2; //slowdown before the animations end
         } else if (this.animationStatus === Constants.REEL_STOP) {
 
-            // var ctr = vctr = 0, f = false;
-            // while (vctr < this.visibleRows) {
-            //     if (this.getChildAt(ctr).y >= 0) {
-            //         f = true;
-            //     }
-            //     if (f) {
-            //         this.getChildAt(ctr).y = vctr * this.getChildAt(ctr).height;
-            //         vctr++;
-            //     }
-            //     ctr = ctr > this.children.length - 1 ? 0 : ctr + 1;
-            // }
-
             return;
         }
 
@@ -649,17 +637,6 @@ var SlotMachine = (function () {
         this.gameBoard = new PixiSprite(TextureCache['gameboard']);
         this.gameBoard.x = 0; this.gameBoard.y = 0;
         this.stage.addChild(this.gameBoard);
-
-        // for(var i=0;i<5;i++){
-        //     var p = this.spinBtn = new CyButton(TextureCache['pattern'+(i+1)]);
-        //     p.buttonMode = false;
-        //     p.x = 10 + (p.width*i);
-        //     p.y = 10;
-        //     this.patternIcons.push(p);
-
-        //     this.stage.addChild(p);
-        // }
-
 
         // create reels and store it to reels array
         this.reelContainer = new PIXI.Container();
