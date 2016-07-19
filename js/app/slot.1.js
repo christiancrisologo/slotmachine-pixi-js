@@ -905,10 +905,10 @@ var SlotMachine = (function () {
         var testHorizontal = function (row) {
             var n = 0,
                 obj = Utils.getArrayCommonValue([].concat(ids), row);
-            obj.list.forEach(function (e) {
+            
                 if (obj.count >= 3)
                     n += ReelDictionary.getScoresByID(obj.value, obj.count);
-            })
+            
             return {score:n,id:obj.value};
         }
         //test straight diagonals
@@ -992,14 +992,13 @@ var SlotMachine = (function () {
 
     SlotMachine.prototype.updateBet = function (flag) {
         if (flag === "up") {
-            if (this.player.tempBalance >= this.config.betStepper) {
+            if (this.player.tempBalance >= this.config.betStepper &&
+                this.player.currentBet<this.player.balance) {
                 this.player.currentBet += this.config.betStepper;
-                this.player.tempBalance -= this.config.betStepper;
+                this.player.tempBalance = this.player.balance-this.player.currentBet;
             }
         } else {
-            if (this.player.currentBet >= this.config.betStepper &&
-                this.player.tempBalance <= this.player.balance &&
-                this.player.balance >= this.config.betStepper ) {
+            if (this.player.currentBet >= this.config.betStepper  ) {
                 this.player.currentBet -= this.config.betStepper;
                 this.player.tempBalance += this.config.betStepper;
             }
@@ -1098,7 +1097,13 @@ var SlotMachine = (function () {
         });
          this.updateWinScore(0);
         // update balance 
+        if(this.player.tempBalance===this.player.balance 
+            && this.player.currentBet>=this.config.betStepper ){
+             this.player.tempBalance -= this.player.currentBet;
+        }
         this.updateBalance(this.player.tempBalance);
+        this.player.balance =  this.player.tempBalance;
+        
 
 
         if (this.gameStatus === Constants.STATE_GAME_READY) {
