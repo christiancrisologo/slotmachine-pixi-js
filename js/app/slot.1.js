@@ -382,12 +382,12 @@ var CyText = (function (_super) {
 var CyLine = (function (_super) {
     __extends(CyLine, _super);
 
-    function CyLine(pos, style = null) {
+    function CyLine(pos, _style )  {
         _super.call(this);
 
-        var _stroke = style && style.hasOwnProperty('stroke') ? style.stroke : 7,
-            _color = style && style.hasOwnProperty('color') ? style.color : 0xfbd500,
-            _alpha = style && style.hasOwnProperty('alpha') ? style.alpha : 1;
+        var _stroke = _style && _style.hasOwnProperty('stroke') ? _style.stroke : 7,
+            _color = _style && _style.hasOwnProperty('color') ? _style.color : 0xfbd500,
+            _alpha = _style && _style.hasOwnProperty('alpha') ? _style.alpha : 1;
 
         this.lineStyle(_stroke, _color, _alpha);
         // create shadow
@@ -583,7 +583,7 @@ var Utils = (function () {
  */
 var GameAudio = (function () {
 
-    function GameAudio(audiosSrc,playLoop=false) {
+    function GameAudio(audiosSrc,playLoop) {
         this.playLoop = playLoop;
         this.audios = audiosSrc.map(function (e) {
             var h;            
