@@ -3,21 +3,28 @@
 "user strict";
 
 (function () {
- 
+
     //create the config to start the SlotMachine
     var c = new SlotConfig();
 
     c.container = document.body; // the DOM container  
     c.assetsJsonSrc = "images/sprite-mapping.json";
-    c.audiosSrc = [
+    this.audiosSrc = [
         ['audios/roll.mp3', 'audios/roll.ogg'],  //spin
         ['audios/slot.mp3', 'audios/slot.ogg'],  //btn
         ['audios/win.mp3', 'audios/win.ogg'],  //win
-        ['audios/nowin.mp3', 'audios/nowin.ogg'] //no win
+        ['audios/nowin.mp3', 'audios/nowin.ogg'], 
+        ['audios/beep3.mp3', 'audios/beep3.ogg'],         
+        ['audios/beep2.mp3', 'audios/beep2.ogg'], 
+        ['audios/beep5.mp3', 'audios/beep5.ogg'],         
+        ['audios/beep4.mp3', 'audios/beep4.ogg'], 
+        ['audios/beep1.mp3', 'audios/beep1.ogg']
+        
     ];
+    this.bgSoundSrc = ['audios/bgsounds.mp3','audios/bgsounds.ogg'] //bg-sounds
     c.speed = 22;
     c.currentBalance = 100;
-    c.loopCounter = 800;
+    c.loopCounter = 300;
     c.reels = [];
     // TEST DATA
     // c.reels.push([1, 5, 5, 5, 5, 1, 1, 1, 1, 2, 5, 5, 5, 5, 2]);
@@ -33,12 +40,10 @@
     c.reels.push([8, 5, 1, 8, 5, 1, 8, 5, 1, 8, 5, 1]);
 
 
-
-   window.onload = function(e) {     
-      
+    window.onload = function (e) {
         // the StotMachine 
         var slotmachine = new SlotMachine(c);
-        
+
     };
 
 } ());
