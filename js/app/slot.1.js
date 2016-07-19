@@ -13,8 +13,10 @@
  *  ReelDictionary - configurable class as  reference for the slot tiles 
  *  CyButton - Pixi Sprite that will have all the default behavior of all buttons
  *  CyText - Pixi text with default style text
+ *  CyLine  - inherits Sprite to draw lines
  *  Utils - static class for utility purposes 
- * 
+ *  GameAudio - for buttons, games and other misc sounds
+ *  SlotMachien - the main CLass
  */
 
 /**
@@ -55,8 +57,14 @@ var SlotConfig = (function () {
             ['audios/roll.mp3', 'audios/roll.ogg'],  //spin
             ['audios/slot.mp3', 'audios/slot.ogg'],  //btn
             ['audios/win.mp3', 'audios/win.ogg'],  //win
-            ['audios/nowin.mp3', 'audios/nowin.ogg'] //no win
+            ['audios/nowin.mp3', 'audios/nowin.ogg'], 
+            ['audios/beep1.mp3', 'audios/beep1.ogg'], 
+            ['audios/beep2.mp3', 'audios/beep2.ogg'], 
+            ['audios/beep3.mp3', 'audios/beep3.ogg'], 
+            ['audios/beep4.mp3', 'audios/beep4.ogg'], 
+            ['audios/beep5.mp3', 'audios/beep5.ogg']
         ];
+        this.bgSoundSrc = ['audios/bgsounds.mp3','audios/bgsounds.ogg'] //bg-sounds
         this.speed = 25;
         this.visible_rows = 3;
         this.currentBalance = 100;
@@ -208,21 +216,22 @@ var Reel = (function (_super) {
         this.deltaSpeed = 0;
         this.targetPos = 0;
         this.results = [];
+        this.lineWins = [];
         this.lastResultPos = 0;
-
+        this.count=0;
     }
     //populate sprite per ids
     Reel.prototype.renderSprites = function () {
 
-        var PixiSprite = PIXI.Sprite,
+        var Sprite = PIXI.Sprite,
             TextureCache = PIXI.utils.TextureCache;
         for (var i = 0; i < this.ids.length; i++) {
             var spriteName = ReelDictionary.getNameByID(this.ids[i]),
-                s = new PixiSprite(TextureCache[spriteName]); // use ID instead of name
+                s = new Sprite(TextureCache[spriteName]); // use ID instead of name
             s.data = ReelDictionary[spriteName];
             s.x = 0;
             s.y = i * (s.height);
-            this.spriteHeight += s.height;
+            this.spriteHeight += s.height; 
             this.addChild(s);
         };
 
@@ -256,13 +265,26 @@ var Reel = (function (_super) {
     Reel.prototype.getResults = function () {
         var results = [],
             ctr = 0;
+        // ideally sort push the result to list according to y-pos then sort to get the right order
+        // just a wordaround to get the 3 result
+        var allSprites = []; 
+        for(var i=0;i<this.spriteCount;i++){
+            allSprites.push(this.getChildAt(i));
+        }
+        allSprites.sort(function(a, b) {
+            return parseFloat(a.y) - parseFloat(b.y);
+        });
 
         while (results.length < this.visibleRows) {
-            if (this.getChildAt(ctr).y >= 0) {
-                results.push(this.getChildAt(ctr).data);
+            if (allSprites[ctr].y===0) { // the first line of result is in y==0     
+                results.push( allSprites[ctr].data );
+                results.push( allSprites[ctr+1].data );
+                results.push( allSprites[ctr+2].data );
             }
-            ctr = ctr > this.children.length - 1 ? 0 : ctr + 1;
+            ctr = ctr >= this.spriteCount - 1 ? 0 : ctr + 1; //iterate to find the y=0
         }
+
+
         return results;
     }
 
@@ -272,9 +294,8 @@ var Reel = (function (_super) {
         this.visibleRows = rows || this.visibleRows;
 
         if (this.animationStatus === Constants.REEL_COMPLETING) {
-            this.speed = 2; //slowdown before the animations end
+            this.speed = 2; //slowdown before the animations ends
         } else if (this.animationStatus === Constants.REEL_STOP) {
-
             return;
         }
 
@@ -352,6 +373,48 @@ var CyText = (function (_super) {
 
     return CyText;
 } (PIXI.Text))
+
+
+
+
+
+
+var CyLine = (function (_super) {
+    __extends(CyLine, _super);
+
+    function CyLine(pos, style = null) {
+        _super.call(this);
+
+        var _stroke = style && style.hasOwnProperty('stroke') ? style.stroke : 7,
+            _color = style && style.hasOwnProperty('color') ? style.color : 0xfbd500,
+            _alpha = style && style.hasOwnProperty('alpha') ? style.alpha : 1;
+
+        this.lineStyle(_stroke, _color, _alpha);
+        // create shadow
+        var shadow = new PIXI.filters.DropShadowFilter();
+        shadow.blur = 4;
+        shadow.alpha = .3;
+        shadow.distance = 5;
+        this.filters = [shadow];
+        this.draw(pos)
+    }
+    CyLine.prototype.draw = function (pos) {
+        for (var i = 0; i < pos.length; i++) {
+            var p = pos[i];
+            if (i == 0) {
+                this.moveTo(p[0], p[1]);
+            } else {
+                this.lineTo(p[0], p[1]);
+            }
+        };
+        this.endFill();
+    }
+    return CyLine;
+} (PIXI.Graphics));
+
+
+
+
 
 /**
  *  Button Class supports hovers, mouserver....
@@ -485,11 +548,12 @@ var Utils = (function () {
         },
 
         getArrayCommonValue: function (array, index) {
-            var val = 0,
+            var val = null,
                 count = '',
-                n = array.map(function (e) {
-                    return index || Number(index) == 0 ? (e[index]) : e;
-                });
+                 n = index!=null || index!=undefined ? 
+                    array.map(function (e,i) { 
+                        return e[index];                   
+                    }) : array;
 
             n.forEach(function (e) {
                 var newMax = n.toString().split(e).length - 1;
@@ -505,7 +569,6 @@ var Utils = (function () {
                 }),
                 value: val,
                 count: count
-
             }
 
         }
@@ -520,18 +583,34 @@ var Utils = (function () {
  */
 var GameAudio = (function () {
 
-    function GameAudio(audiosSrc) {
+    function GameAudio(audiosSrc,playLoop=false) {
+        this.playLoop = playLoop;
         this.audios = audiosSrc.map(function (e) {
-            return new Howl({ urls: e });
+            var h;            
+            if(playLoop){
+                h =   new Howl({
+                    urls: e,
+                    autoplay: true,
+                    loop: true,
+                    volume: 0.8,
+                    });
+            }else{
+                h = new Howl({ urls: e });
+            }
+            return h;
         });
     }
 
     GameAudio.prototype.play = function (id) {
-        this.audios[id].play();
+        if(this.playLoop){
+             this.audios[id].stop().play();
+        }else{
+            this.audios[id].play();
+        }
     }
 
     return GameAudio;
-} ())
+} (this))
 
 
 
@@ -605,6 +684,8 @@ var SlotMachine = (function () {
 
         // load audios
         this.audios = new GameAudio(this.config.audiosSrc);
+        var bgSound  = new GameAudio([this.config.bgSoundSrc],true);
+        bgSound.play(0);
 
         // load and render UIs
         loader
@@ -630,13 +711,24 @@ var SlotMachine = (function () {
     SlotMachine.prototype.renderAssets = function () {
         var _t = this,
             TextureCache = PIXI.utils.TextureCache,
-            PixiSprite = PIXI.Sprite;
+            Sprite = PIXI.Sprite;
 
         //set gameboard background    
 
-        this.gameBoard = new PixiSprite(TextureCache['gameboard']);
+        this.gameBoard = new Sprite(TextureCache['gameboard']);
         this.gameBoard.x = 0; this.gameBoard.y = 0;
         this.stage.addChild(this.gameBoard);
+
+        // for(var i=0;i<5;i++){
+        //     var p = this.spinBtn = new CyButton(TextureCache['pattern'+(i+1)]);
+        //     p.buttonMode = false;
+        //     p.x = 10 + (p.width*i);
+        //     p.y = 10;
+        //     this.patternIcons.push(p);
+
+        //     this.stage.addChild(p);
+        // }
+
 
         // create reels and store it to reels array
         this.reelContainer = new PIXI.Container();
@@ -747,6 +839,36 @@ var SlotMachine = (function () {
         this.stage.addChild(masker);
         this.reelContainer.mask = masker;
 
+
+
+        var l1 = new CyLine([[23, 130], [770, 130]]
+            , { color: 0xf2f859 });
+        l1.visible = false;
+        this.stage.addChild(l1);
+
+        var l2 = new CyLine([[23, 250], [770, 250]]
+            , { color: 0xc80000 });
+        l2.visible = false;
+        this.stage.addChild(l2);
+
+        var l3 = new CyLine([[23, 370], [770, 370]]
+            , { color: 0x00ff87 });
+        l3.visible = false;
+        this.stage.addChild(l3);
+
+        var l4 = new CyLine([[25, 75], [395, 428], [770, 75]]
+            , { color: 0xffa800 });
+        l4.visible = false;
+        this.stage.addChild(l4);
+
+        var l5 = new CyLine([[25, 429], [395, 75], [770, 429]]
+            , { color: 0x1eff00 });
+        l5.visible = false;
+        this.stage.addChild(l5);
+
+        this.lineWins = [l1, l2, l3, l4, l5];
+
+
         this.startGame();
     }
 
@@ -754,6 +876,7 @@ var SlotMachine = (function () {
     SlotMachine.prototype.startGame = function () {
         var _t = this;
         this.setEnableButtons(true);
+
         var animate = function () {
             //reelAnim();
             _t.draw();
@@ -765,7 +888,7 @@ var SlotMachine = (function () {
     }
 
     SlotMachine.prototype.testResult = function () {
-        var ids, nReels = [];
+        var _t=this,ids=[], nReels = [];
 
         for (var i = 0; i < this.reels.length; i++) {
             var r = this.reels[i];
@@ -786,34 +909,85 @@ var SlotMachine = (function () {
                 if (obj.count >= 3)
                     n += ReelDictionary.getScoresByID(obj.value, obj.count);
             })
-            return n;
+            return {score:n,id:obj.value};
         }
         //test straight diagonals
         var testDiagonalDown = function () {
             var n = 0,
-                tmp = [ids[0][0], ids[1][1], ids[2][2], ids[1][3], ids[0][4]],
+                tmp = [ids[0][0], ids[1][1], ids[2][2], ids[3][1], ids[4][0]],
                 obj = Utils.getArrayCommonValue(tmp);
             if (obj.count >= 3)
                 n += ReelDictionary.getScoresByID(obj.value, obj.count);
-            return n;
+            return {score:n,id:obj.value};
         }
 
         var testDiagonalUp = function () {
             var n = 0,
-                tmp = [ids[2][0], ids[1][1], ids[0][2], ids[1][3], ids[2][4]],
+                tmp = [ids[2][0], ids[1][1], ids[0][2], ids[3][1], ids[4][2]],
                 obj = Utils.getArrayCommonValue(tmp);
             if (obj.count >= 3)
                 n += ReelDictionary.getScoresByID(obj.value, obj.count);
-            return n;
+            return {score:n,id:obj.value};
         }
 
-        var scores = testHorizontal(0);
-        scores += testHorizontal(1);
-        scores += testHorizontal(2);
-        scores += testDiagonalDown();
-        scores += testDiagonalUp();
+        var scores = 0,
+            showLines = [],
+            t1 = null, t2 = null, t3 = null, t4 = null, t5 = null;
 
-        this.updateScores(scores);
+        t1 = testHorizontal(0);
+        if (t1.score > 0) {
+            showLines.push({line:this.lineWins[0] , score:t1.score, id:t1.id});
+            scores += t1.score;
+        }
+        t2 = testHorizontal(1);
+        if (t2.score > 0) {
+            showLines.push( {line:this.lineWins[1] , score:t2.score, id:t2.id} );
+            scores += t2.score;
+        }
+        t3 = testHorizontal(2);
+        if (t3.score > 0) {
+            showLines.push({line:this.lineWins[2] , score:t3.score, id:t3.id});
+            scores += t3.score;
+        }
+        t4 = testDiagonalDown();
+        if (t4.score > 0) {
+            showLines.push({line:this.lineWins[3] , score:t4.score, id:t4.id});
+            scores += t4.score;
+        }
+        t5 = testDiagonalUp();
+        if (t5.score > 0) {
+            showLines.push({line:this.lineWins[4] , score:t5.score, id:t5.id});
+            scores += t5.score;
+        }
+
+ 
+        var offset = 0,tempScore=0;
+        showLines.forEach(function (e,i) {
+            setTimeout(function () {
+                tempScore+=e.score;
+                _t.updateScores(tempScore);
+               e.line.visible = true;
+               
+               var soundsId = e.id<5 ? [e.id+3] : 8;  
+               _t.audios.play(soundsId);
+
+
+
+                // // enable buttons to start the games 
+                if(i===showLines.length-1){
+                    _t.setEnableButtons(true);
+                }
+
+            }, 1000 * i);            
+        });
+
+        if(showLines.length===0){
+             _t.setEnableButtons(true);
+            _t.updateScores(scores);
+            
+        }      
+
+        
     }
 
     SlotMachine.prototype.updateBet = function (flag) {
@@ -824,13 +998,14 @@ var SlotMachine = (function () {
             }
         } else {
             if (this.player.currentBet >= this.config.betStepper &&
-                this.player.tempBalance < this.player.balance) {
+                this.player.tempBalance <= this.player.balance &&
+                this.player.balance >= this.config.betStepper ) {
                 this.player.currentBet -= this.config.betStepper;
                 this.player.tempBalance += this.config.betStepper;
             }
         }
         this.updateBetText(this.player.currentBet);
-        this.updateBalance(this.player.tempBalance);
+       
     }
 
     SlotMachine.prototype.updateScores = function (scores) {
@@ -838,16 +1013,15 @@ var SlotMachine = (function () {
         if (scores <= 0) {
             if (this.player.tempBalance <= 0) {
                 this.player.balance = 0;
-                this.player.currentBet = 0;
-                this.setEnableButtons(false);
+                this.player.currentBet = 0; 
             }
             this.player.balance = this.player.tempBalance;
-            this.audios.play(3);
+            //this.audios.play(3);
         } else {
             if (this.player.currentBet > 0) {
                 this.player.balance += scores;
             }
-            this.audios.play(2);
+            this.audios.play(2); 
         }
         if (this.player.currentBet > this.player.balance) {
             if (this.player.balance > this.betStepper) {
@@ -906,7 +1080,7 @@ var SlotMachine = (function () {
             case Constants.STATE_TEST_RESULT:
 
                 _t.testResult();
-                _t.setEnableButtons(true);
+                
                 this.gameStatus = Constants.STATE_GAME_READY;
                 return;
 
@@ -918,6 +1092,14 @@ var SlotMachine = (function () {
 
     SlotMachine.prototype.spinReels = function () {
         var _t = this;
+        // reset game board 
+        this.lineWins.forEach(function(e){
+            e.visible = false;
+        });
+         this.updateWinScore(0);
+        // update balance 
+        this.updateBalance(this.player.tempBalance);
+
 
         if (this.gameStatus === Constants.STATE_GAME_READY) {
             _t.setEnableButtons(false);
